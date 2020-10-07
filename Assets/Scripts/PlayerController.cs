@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 	Rigidbody2D rb2d;
+    Animator animator;
 
 	public float speed; // the speedpacman can travel
     // Start is called before the first frame update
@@ -14,11 +15,13 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
-    void Update()
-    { 
+    void FixedUpdate()
+    {
+        animator.SetFloat("currentSpeed", rb2d.velocity.magnitude); 
     	// moving left
         if (Input.GetAxis("Horizontal") < 0 ) 
         {
