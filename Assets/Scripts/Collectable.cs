@@ -8,7 +8,9 @@ public class Collectable : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        points = Random.Range(100, 200);
+        float scale = ((float)points) / 100;
+        transform.localScale = new Vector3(scale, scale);
     }
 
     // Update is called once per frame
