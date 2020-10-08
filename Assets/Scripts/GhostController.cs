@@ -19,7 +19,19 @@ public class GhostController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Rotate Eyes
+        foreach (Transform t in GetComponentsInChildren<Transform>())
+        {
+            if ( t != transform)
+            {
+                t.up = direction;
+            }
+            
+        }
+
+        // Move
         rb2d.velocity = direction * speed;
+        
         if (rb2d.velocity.x == 0)
         {
             transform.position = new Vector2(Mathf.Round(transform.position.x), transform.position.y);
