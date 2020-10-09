@@ -19,6 +19,17 @@ public class GhostController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Wall Bump Detection
+        if (!openDirection(direction))
+        {
+            changeDirection();
+        }
+        // Come Across an Intersection
+        else if (canChangeDirection())
+        {
+            changeDirection();
+        }
+
         // Rotate Eyes
         foreach (Transform t in GetComponentsInChildren<Transform>())
         {
@@ -40,5 +51,48 @@ public class GhostController : MonoBehaviour
         {
             transform.position = new Vector2(transform.position.x, Mathf.Round(transform.position.y));
         }
+    }
+
+    private bool canChangeDirection()
+    {
+        Vector2 perpRight = Utility.PerpendicularRight(direction);
+        bool openRight = openDirection(perpRight);
+        Vector2 perpLeft = Utility.PerpendicularLeft(direction);
+        bool openLeft = openDirection(perpLeft);
+        return openLeft || openRight;
+    }
+
+    private void changeDirection()
+    {
+        Vector2 perpRight = Utility.PerpendicularRight(direction);
+        bool openRight = openDirection(perpRight);
+        Vector2 perpLeft = Utility.PerpendicularLeft(direction);
+        bool openLeft = openDirection(perpLeft);
+        if (openRight || openLeft)
+        {
+            int choce = Random.Range(0, 2);
+            if (!openLeft || (choce == 0 && openRight))
+            {
+                direction = perpRight;
+            }
+            else
+            {
+                direction = perpLeft;
+            }
+        }
+    }
+
+    private bool openDirection(Vector2 direction)
+    {
+        RaycastHit2D[] rch2ds = new RaycastHit2D[10];
+        cc2d.Cast(direction, rch2ds, 1f, true);
+        foreach (RaycastHit2D rch2d in rch2ds)
+        {
+            if (rch2d && rch2d.collider.gameObject.tag == "Wall")
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }
