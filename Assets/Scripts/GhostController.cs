@@ -22,12 +22,25 @@ public class GhostController : MonoBehaviour
         // Wall Bump Detection
         if (!openDirection(direction))
         {
-            changeDirection();
+            if (canChangeDirection())
+            {
+                changeDirection();
+            }
+            else if (rb2d.velocity.magnitude < speed)
+            {
+                changeDirectionAtRandom();
+            }
         }
         // Come Across an Intersection
-        else if (canChangeDirection())
+        else if (canChangeDirection() && Time.time > changeDirectionTime)
         {
-            changeDirection();
+            changeDirectionAtRandom();
+        }
+
+        // stuck on a non-wall
+        else if (rb2d.velocity.magnitude < speed)
+        {
+            changeDirectionAtRandom();
         }
 
         // Rotate Eyes
@@ -53,6 +66,8 @@ public class GhostController : MonoBehaviour
         }
     }
 
+    private float changeDirectionTime; //the soonest time he can change direction
+
     private bool canChangeDirection()
     {
         Vector2 perpRight = Utility.PerpendicularRight(direction);
@@ -62,8 +77,18 @@ public class GhostController : MonoBehaviour
         return openLeft || openRight;
     }
 
+    private void changeDirectionAtRandom()
+    {
+        changeDirectionTime = Time.time + 1;
+        if (Random.Range(0, 3) == 0 )
+        {
+            changeDirection();
+        }
+    }
+
     private void changeDirection()
     {
+        changeDirectionTime = Time.time + 1;
         Vector2 perpRight = Utility.PerpendicularRight(direction);
         bool openRight = openDirection(perpRight);
         Vector2 perpLeft = Utility.PerpendicularLeft(direction);
@@ -79,6 +104,11 @@ public class GhostController : MonoBehaviour
             {
                 direction = perpLeft;
             }
+        }
+        
+        else if(!openLeft && !openRight)
+        {
+            direction = -direction;
         }
     }
 
